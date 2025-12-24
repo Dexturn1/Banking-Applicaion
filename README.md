@@ -1,6 +1,14 @@
 # Banking App
 
-Demo project for Spring Boot Banking app.
+This is a demo project for a Spring Boot Banking application, created for educational purposes.
+It demonstrates how to build a RESTful API using Spring Boot, Spring Data JPA, and MySQL.
+
+The project focuses on backend development concepts, including:
+*   **REST API Development**: Creating endpoints for banking operations.
+*   **Database Integration**: Using Spring Data JPA and Hibernate to interact with a MySQL database.
+*   **Entity Management**: Defining data models like `Account`.
+*   **Exception Handling**: Implementing custom exceptions for error management.
+*   **DTO Pattern**: Using Data Transfer Objects to separate internal entities from API responses.
 
 ## Technologies
 
