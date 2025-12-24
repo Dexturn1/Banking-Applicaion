@@ -6,9 +6,9 @@ import com.prabhat.banking_app.entity.Account;
 public class AccountMapper {
 
     public static Account mapToAccount(AccountDto accountDto){
-        return new Account(accountDto.getId(),
-                            accountDto.getAccountHolderName(),
-                            accountDto.getBalance());
+        return new Account(accountDto.id(),
+                            accountDto.accountHolderName(),
+                            accountDto.balance());
     }
 
 
