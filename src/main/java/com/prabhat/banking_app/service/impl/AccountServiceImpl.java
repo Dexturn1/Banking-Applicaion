@@ -7,6 +7,8 @@ import com.prabhat.banking_app.repository.AccountRepository;
 import com.prabhat.banking_app.service.AccountService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -40,5 +42,25 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(account);
 
         return new AccountDto(account.getId(), account.getAccountHolderName(),account.getBalance());
+    }
+
+    @Override
+    public AccountDto withdraw(Long id, double amount) {
+        Account account = accountRepository.findById(id).orElseThrow(()->new RuntimeException("Account does not exist"));
+
+        if(amount > account.getBalance())
+            throw new RuntimeException("Insufficient Amount");
+
+        account.setBalance(account.getBalance() - amount);
+        Account savedAccount = accountRepository.save(account);
+        return new AccountDto(savedAccount.getId(), savedAccount.getAccountHolderName(), savedAccount.getBalance());
+    }
+
+    @Override
+    public List<AccountDto> getAllAccounts() {
+
+        List<Account> listOfAccount = accountRepository.findAll();
+
+        return listOfAccount.stream().map(AccountMapper::mapToAccountDto).toList();
     }
 }
