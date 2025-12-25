@@ -23,6 +23,4 @@ public class Transaction {
     private double amount;
     private String transactionType;  // Deposit, Withdraw, Transfer
     private LocalDateTime timestamp;
-
-
 }
