@@ -2,6 +2,7 @@ package com.prabhat.banking_app.service;
 
 
 import com.prabhat.banking_app.dto.AccountDto;
+import com.prabhat.banking_app.dto.TransferFundDto;
 
 import java.util.List;
 
@@ -13,5 +14,7 @@ public interface AccountService {
     AccountDto withdraw(Long id, double amount);
     List<AccountDto> getAllAccounts();
     void deleteAccount(Long id);
+
+    void transferFunds(TransferFundDto  transferFundDto);
 
 }

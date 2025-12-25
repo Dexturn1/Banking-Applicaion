@@ -1,6 +1,7 @@
 package com.prabhat.banking_app.service.impl;
 
 import com.prabhat.banking_app.dto.AccountDto;
+import com.prabhat.banking_app.dto.TransferFundDto;
 import com.prabhat.banking_app.entity.Account;
 import com.prabhat.banking_app.exception.AccountException;
 import com.prabhat.banking_app.mapper.AccountMapper;
@@ -69,5 +70,27 @@ public class AccountServiceImpl implements AccountService {
     public void deleteAccount(Long id) {
         Account account = accountRepository.findById(id).orElseThrow(()-> new AccountException("Account does not exist"));
         accountRepository.delete(account);
+    }
+
+    @Override
+    public void transferFunds(TransferFundDto transferFundDto) {
+
+        //  Retrieve the account from which we send the amount
+        Account fromAccount = accountRepository
+                .findById(transferFundDto.fromAccountId())
+                .orElseThrow(()-> new AccountException("Account does not exists"));
+
+        //  Retrieve the account to which we send the amount
+        Account toAccount = accountRepository.findById(transferFundDto.toAccountId())
+                .orElseThrow(()-> new AccountException("Account does not exists"));
+
+        // Debit the amount from fromAccount object
+        fromAccount.setBalance(fromAccount.getBalance() - transferFundDto.amount());
+
+        // credit the amount to toAccount Object
+        toAccount.setBalance(toAccount.getBalance() + transferFundDto.amount());
+
+        accountRepository.save(toAccount);
+        accountRepository.save(fromAccount);
     }
 }

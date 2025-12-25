@@ -1,6 +1,7 @@
 package com.prabhat.banking_app.controller;
 
 import com.prabhat.banking_app.dto.AccountDto;
+import com.prabhat.banking_app.dto.TransferFundDto;
 import com.prabhat.banking_app.service.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -58,5 +59,11 @@ public class AccountController {
         public ResponseEntity<String> deleteById(@PathVariable Long id){
                 accountService.deleteAccount(id);
                 return new ResponseEntity<>("Account deleted Successfully!", HttpStatus.OK);
+        }
+
+        @PostMapping("/transfer")
+        public ResponseEntity<String> transferFunds(@RequestBody TransferFundDto transferFundDto){
+                accountService.transferFunds(transferFundDto);
+                return new ResponseEntity<>("Transfer successfully!", HttpStatus.OK);
         }
 }
