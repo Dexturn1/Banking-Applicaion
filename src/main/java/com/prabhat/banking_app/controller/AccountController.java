@@ -18,7 +18,6 @@ public class AccountController {
 
         private final AccountService accountService;
 
-
         // Add account rest API
         @PostMapping()
         public ResponseEntity<AccountDto> addAccount(@RequestBody AccountDto accountDto){

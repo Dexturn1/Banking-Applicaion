@@ -9,6 +9,7 @@ import com.prabhat.banking_app.mapper.AccountMapper;
 import com.prabhat.banking_app.repository.AccountRepository;
 import com.prabhat.banking_app.repository.TransactionRepository;
 import com.prabhat.banking_app.service.AccountService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class AccountServiceImpl implements AccountService {
 
     private static final String Transaction_TYPE_DEPOSIT = "DEPOSIT";
     private static final String Transaction_TYPE_WITHDRAW = "WITHDRAW";
+    private static final String Transaction_TYPE_TRANSFER = "TRANSFER";
 
 
 
@@ -91,25 +93,46 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.delete(account);
     }
 
+    @Transactional
     @Override
     public void transferFunds(TransferFundDto transferFundDto) {
 
-        //  Retrieve the account from which we send the amount
         Account fromAccount = accountRepository
                 .findById(transferFundDto.fromAccountId())
-                .orElseThrow(()-> new AccountException("Account does not exists"));
+                .orElseThrow(() -> new AccountException("Sender account does not exist"));
 
-        //  Retrieve the account to which we send the amount
-        Account toAccount = accountRepository.findById(transferFundDto.toAccountId())
-                .orElseThrow(()-> new AccountException("Account does not exists"));
+        Account toAccount = accountRepository
+                .findById(transferFundDto.toAccountId())
+                .orElseThrow(() -> new AccountException("Receiver account does not exist"));
 
-        // Debit the amount from fromAccount object
+        if (transferFundDto.amount() <= 0) {
+            throw new AccountException("Amount must be greater than zero");
+        }
+
+        if (fromAccount.getBalance() < transferFundDto.amount()) {
+            throw new AccountException("Insufficient balance");
+        }
+
         fromAccount.setBalance(fromAccount.getBalance() - transferFundDto.amount());
-
-        // credit the amount to toAccount Object
         toAccount.setBalance(toAccount.getBalance() + transferFundDto.amount());
 
-        accountRepository.save(toAccount);
         accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+
+        Transaction debitTxn = new Transaction();
+        debitTxn.setAccountId(fromAccount.getId());
+        debitTxn.setAmount(transferFundDto.amount());
+        debitTxn.setTransactionType("TRANSFER_DEBIT");
+        debitTxn.setTimestamp(LocalDateTime.now());
+
+        Transaction creditTxn = new Transaction();
+        creditTxn.setAccountId(toAccount.getId());
+        creditTxn.setAmount(transferFundDto.amount());
+        creditTxn.setTransactionType("TRANSFER_CREDIT");
+        creditTxn.setTimestamp(LocalDateTime.now());
+
+        transactionRepository.save(debitTxn);
+        transactionRepository.save(creditTxn);
     }
+
 }
