@@ -1,6 +1,7 @@
 package com.prabhat.banking_app.service.impl;
 
 import com.prabhat.banking_app.dto.AccountDto;
+import com.prabhat.banking_app.dto.TransactionDTO;
 import com.prabhat.banking_app.dto.TransferFundDto;
 import com.prabhat.banking_app.entity.Account;
 import com.prabhat.banking_app.entity.Transaction;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -134,5 +136,22 @@ public class AccountServiceImpl implements AccountService {
         transactionRepository.save(debitTxn);
         transactionRepository.save(creditTxn);
     }
+
+    @Override
+    public List<TransactionDTO> getAccountTransactions(Long accountId) {
+        List<Transaction> transactions = transactionRepository.findByAccountIdOrderByTimestampDesc(accountId);
+        return transactions.stream().map(this::convertEntityToDto).collect(Collectors.toList());
+    }
+
+    private TransactionDTO  convertEntityToDto(Transaction transaction){
+        TransactionDTO transactionDto =
+                new TransactionDTO(transaction.getId()
+                        ,transaction.getAccountId(),
+                        transaction.getAmount(),
+                        transaction.getTransactionType(),
+                        transaction.getTimestamp());
+        return transactionDto;
+    }
+
 
 }

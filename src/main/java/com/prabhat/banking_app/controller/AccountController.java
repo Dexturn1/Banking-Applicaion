@@ -1,6 +1,7 @@
 package com.prabhat.banking_app.controller;
 
 import com.prabhat.banking_app.dto.AccountDto;
+import com.prabhat.banking_app.dto.TransactionDTO;
 import com.prabhat.banking_app.dto.TransferFundDto;
 import com.prabhat.banking_app.service.AccountService;
 import lombok.AllArgsConstructor;
@@ -64,5 +65,14 @@ public class AccountController {
         public ResponseEntity<String> transferFunds(@RequestBody TransferFundDto transferFundDto){
                 accountService.transferFunds(transferFundDto);
                 return new ResponseEntity<>("Transfer successfully!", HttpStatus.OK);
+        }
+
+        // Build transaction REST API
+        @GetMapping("/{id}/trancactions")
+        public ResponseEntity<List<TransactionDTO>> fetchTransactions(@PathVariable("id") Long accountID){
+
+                List<TransactionDTO> transactions =accountService.getAccountTransactions(accountID);
+
+                return new ResponseEntity<>(transactions, HttpStatus.OK);
         }
 }
